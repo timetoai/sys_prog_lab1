@@ -14,6 +14,8 @@ int strcmpi(const char* str1, const char* str2);
 int (*comparator)(const char*, const char*);
 void qs(char** s_arr, int first, int last);
 void swap(char** s1,  char** s2);
+FILE *fi = stdin, *fo = stdout;
+
 
 int main(int argc, char *argv[])
 {
@@ -32,6 +34,21 @@ int main(int argc, char *argv[])
 		opt = getopt(argc, argv, optString);
 	}
 
+	if (argv[optind])
+	{
+		if ((fi = fopen(argv[optind], "r")) == NULL)
+		{
+			printf("Can't open file for input");
+			exit(1);
+		}
+		if (argv[optind + 1])
+			if ((fo = fopen(argv[optind + 1], "w")) == NULL)
+			{
+				printf("Can't open file for output");
+				exit(1);
+			}
+	}
+
 	int str_count = 0;
 	char **ptr = (char **) malloc(sizeof (char*));
 	if (!ptr) {display_mem_err();}
@@ -39,7 +56,7 @@ int main(int argc, char *argv[])
 	if (!ptr[str_count]) {display_mem_err();}
 	
 	// считывание строк
-	while(fgets(ptr[str_count], MAXLENGTH, stdin))
+	while(fgets(ptr[str_count], MAXLENGTH, fi))
 	{
 		str_count++;
 		ptr = (char **) realloc(ptr, (str_count + 1) * sizeof (char*));
@@ -59,18 +76,28 @@ int main(int argc, char *argv[])
 	}
 	// Сортировка строк
 	for (int i = 0; i < str_count; i++)
-		for (int j = i + 1; j < str_count; j++)
-			if (comparator(ptr[i], ptr[j]) > 0) 
+		for (int j = 0; j < str_count; j++)
+			if ((i<j) && strcmpi(ptr[i], ptr[j]) > 0) 
 				swap(&ptr[i], &ptr[j]);
 				
 	//Вывод уникальных строк
 	for (int i = 0; i < str_count; i++)
 	{
-		while ((i + 1 < str_count) && !comparator(ptr[i],ptr[i+1])) i++;
-		if (i && comparator(ptr[i], ptr[i+1])) printf("%s", ptr[i]);
+		while ((i + 1 < str_count) && (comparator(ptr[i],ptr[i+1]) == 0)) i++;
+		if (i && (i + 1 < str_count) && comparator(ptr[i], ptr[i+1]) != 0 && comparator(ptr[i], ptr[i-1]) != 0) fputs(ptr[i], fo);
+		if ((i == 0) && comparator(ptr[i],ptr[i+1]) != 0) fputs(ptr[i], fo);
+		if ((i + 1 == str_count) && comparator(ptr[i], ptr[i+1])) fputs(ptr[i], fo);
 	}
 
-	//Освобождение памяти
+	//Освобождение памяти, закрытие файлов
+	if (fi != stdin)
+	{
+		fclose(fi);
+	}
+	if (fo != stdout)
+	{
+		fclose(fo);
+	}
 	for (int i = 0; i < str_count; i++)
 	{
 		free(ptr[i]);
