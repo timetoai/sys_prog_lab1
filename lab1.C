@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 		while ((i + 1 < str_count) && (comparator(ptr[i],ptr[i+1]) == 0)) i++;
 		if (i && (i + 1 < str_count) && comparator(ptr[i], ptr[i+1]) != 0 && comparator(ptr[i], ptr[i-1]) != 0) fputs(ptr[i], fo);
 		if ((i == 0) && comparator(ptr[i],ptr[i+1]) != 0) fputs(ptr[i], fo);
-		if ((i + 1 == str_count) && comparator(ptr[i], ptr[i+1])) fputs(ptr[i], fo);
+		if ((i + 1 == str_count) && comparator(ptr[i-1], ptr[i])) fputs(ptr[i], fo);
 	}
 
 	//Освобождение памяти, закрытие файлов
