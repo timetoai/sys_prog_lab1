@@ -115,7 +115,7 @@ void display_mem_err()
 // В случае ввода несуществующих ключей выводит справку об использовании
 void display_usage()
 {
-	printf("%s", "Usage: lab1 [-i]\r\nProgram takes array of strings and prints unique\r\nOptions:\r\n-i, ignore cases\r\n");
+	printf("%s", "Usage: lab1 [-i] [input_file [output_file]]\r\nProgram takes array of strings and prints unique\r\nOptions:\r\n-i, ignore cases\r\n");
 	exit(1);
 }
 
