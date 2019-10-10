@@ -49,21 +49,29 @@ int main(int argc, char *argv[])
 			}
 	}
 
-	int str_count = 0;
-	char **ptr = (char **) malloc(sizeof (char*));
-	if (!ptr) {display_mem_err();}
-	ptr[str_count] = (char *) malloc(sizeof(char[MAXLENGTH]));
-	if (!ptr[str_count]) {display_mem_err();}
-	
-	// считывание строк
-	while(fgets(ptr[str_count], MAXLENGTH, fi))
+	//Считывание строк
+	int len = 1000;
+	char *buf = (char*) malloc(len), **ptr = NULL; if (buf == NULL) display_mem_err();
+	int ch_count = 0, str_count = 0;
+	char *line = NULL;
+	while(fgets(buf, len, fi))
 	{
-		str_count++;
-		ptr = (char **) realloc(ptr, (str_count + 1) * sizeof (char*));
-		ptr[str_count - 1] = (char *) realloc(ptr[str_count - 1], strlen(ptr[str_count - 1]) * sizeof(char));
-		ptr[str_count] = (char *) malloc(sizeof(char[1000]));
-		if (!(ptr && ptr[str_count - 1] && ptr[str_count])) {display_mem_err();}
+		int buf_len = strlen(buf);
+		line = (char*) realloc(line, buf_len + ch_count + 1); if (line == NULL) display_mem_err();
+		strcpy(line + ch_count, buf);
+		ch_count += buf_len;
+		if (strchr(buf, '\n'))
+		{
+			ptr = (char**) realloc(ptr, (str_count + 1)*sizeof(char*)); if (ptr == NULL) display_mem_err();
+			*(ptr + str_count) = (char*) malloc(ch_count + 1); if (*(ptr + str_count) == NULL) display_mem_err();
+			strcpy(*(ptr+str_count), line);
+			free(line);
+			line = NULL;
+			str_count++;
+			ch_count = 0;
+		}
 	}
+	free(buf);
 
 	// Задание функции для сравнения с учётом введенных ключей
 	if (ignore_case) 
