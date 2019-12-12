@@ -10,7 +10,6 @@ int opt = 0;
 bool ignore_case = false;
 void display_usage();
 void display_mem_err();
-int strcmpi(const char* str1, const char* str2);
 int (*comparator)(const char*, const char*);
 void qs(char** s_arr, int first, int last);
 void swap(char** s1,  char** s2);
@@ -76,7 +75,7 @@ int main(int argc, char *argv[])
 	// Задание функции для сравнения с учётом введенных ключей
 	if (ignore_case) 
 	{
-		comparator = strcmpi;
+		comparator = strcasecmp;
 	}
 	else 
 	{
@@ -85,7 +84,7 @@ int main(int argc, char *argv[])
 	// Сортировка строк
 	for (int i = 0; i < str_count; i++)
 		for (int j = 0; j < str_count; j++)
-			if ((i<j) && strcmpi(ptr[i], ptr[j]) > 0) 
+			if ((i<j) && strcasecmp(ptr[i], ptr[j]) > 0) 
 				swap(&ptr[i], &ptr[j]);
 				
 	//Вывод уникальных строк
@@ -125,30 +124,6 @@ void display_usage()
 {
 	printf("%s", "Usage: lab1 [-i] [input_file [output_file]]\r\nProgram takes array of strings and prints unique\r\nOptions:\r\n-i, ignore cases\r\n");
 	exit(1);
-}
-
-// Сравнение строк без учёта регистра
-int strcmpi(const char* str1, const char* str2)
-{
-	char *buf1 = (char*) malloc(strlen(str1) * sizeof(char));
-	char *buf2 = (char*) malloc(strlen(str2) * sizeof(char));
-	if (!(buf1 && buf2)) {display_mem_err();}
-	strcpy(buf1, str1);
-	strcpy(buf2, str2);
-
-	for (int i = 0; i < strlen(buf1); i++)
-	{
-		if (isalpha(buf1[i]) && isupper(buf1[i])) {buf1[i] = tolower(buf1[i]);}
-	}
-	for (int i = 0; i < strlen(buf2); i++)
-	{
-		if (isalpha(buf2[i]) && isupper(buf2[i])) {buf2[i] = tolower(buf2[i]);}
-	}
-
-	int res = strcmp(buf1, buf2);
-	free(buf1);
-	free(buf2);
-	return res;
 }
 
 // Вспомогательная функция дkя сортировки, меняет укзазатели на строки местами
